@@ -16875,6 +16875,14 @@ try {
 
 /***/ }),
 
+/***/ 2222:
+/***/ ((module) => {
+
+module.exports = eval("require")("@actions/core");
+
+
+/***/ }),
+
 /***/ 4300:
 /***/ ((module) => {
 
@@ -18430,7 +18438,11 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const octokit_1 = __nccwpck_require__(4095);
-async function main(owner, repo, issueNumberToUpdate) {
+const core = __nccwpck_require__(2222);
+async function main() {
+    const owner = core.getInput("org_name");
+    const repo = core.getInput("repo_name");
+    const issueNumberToUpdate = core.getInput("issue_number");
     const octokit = new octokit_1.Octokit({ auth: process.env.GITHUB_TOKEN });
     const ctx = { octokit };
     const allIssues = await getAllOpenIssues(ctx, owner, repo);
@@ -18439,6 +18451,7 @@ async function main(owner, repo, issueNumberToUpdate) {
     const templateParams = {
         EnhancementIssues: getTopIssuesByLabel("enhancement", issues),
         BugIssues: getTopIssuesByLabel("bug", issues),
+        allIssues: issues,
     };
     const rankingBodyString = renderRankingTemplate(templateParams);
     await octokit.rest.issues.update({
@@ -18488,15 +18501,12 @@ function hasLabel(label, issue) {
 }
 function renderRankingTemplate(templateParams) {
     return `
-## Top Enhancements
-${templateParams.EnhancementIssues.map((issue) => `1. [${issue.html_url}](${issue.html_url}) - ${issue.reactions["+1"]} :+1:`).join("\n")}
+## Top Issues
+${templateParams.allIssues.map((issue) => `1. [${issue.html_url}](${issue.html_url}) - ${issue.reactions["+1"]} :+1:`).join("\n")}
     
 `;
 }
-const owner = process.argv[2];
-const repo = process.argv[3];
-const issueNumberToUpdate = parseInt(process.argv[4]);
-main(owner, repo, issueNumberToUpdate).catch(error => console.error(error));
+main().catch(error => console.error(error));
 
 })();
 

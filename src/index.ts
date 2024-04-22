@@ -1,5 +1,6 @@
 import { Octokit } from "octokit";
 import { Context } from "probot";
+const core = require('@actions/core');
 
 interface Issue {
     number: number;
@@ -14,7 +15,11 @@ interface IssueListOptions {
     issueNumberToUpdate: number;
 }
 
-async function main(owner: string, repo: string, issueNumberToUpdate: number) {
+async function main() {
+    const owner:string = core.getInput("org_name")
+    const repo:string = core.getInput("repo_name");
+    const issueNumberToUpdate:number = core.getInput("issue_number");
+
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
     const ctx: Context = { octokit } as unknown as Context;
@@ -31,6 +36,7 @@ async function main(owner: string, repo: string, issueNumberToUpdate: number) {
     const templateParams = {
         EnhancementIssues: getTopIssuesByLabel("enhancement", issues),
         BugIssues: getTopIssuesByLabel("bug", issues),
+        allIssues: issues,
     };
 
     // Render template for issue body.
@@ -90,16 +96,12 @@ function hasLabel(label: string, issue: Issue): boolean {
 
 function renderRankingTemplate(templateParams: any): string {
     return`
-## Top Enhancements
-${templateParams.EnhancementIssues.map((issue:Issue) => `1. [${issue.html_url}](${issue.html_url}) - ${issue.reactions["+1"]} :+1:`).join("\n")}
+## Top Issues
+${templateParams.allIssues.map((issue:Issue) => `1. [${issue.html_url}](${issue.html_url}) - ${issue.reactions["+1"]} :+1:`).join("\n")}
     
 `;
 
 }
 
-// Example usage
-const owner = process.argv[2];
-const repo = process.argv[3];
-const issueNumberToUpdate = parseInt(process.argv[4]);
 
-main(owner, repo, issueNumberToUpdate).catch(error => console.error(error));
+main().catch(error => console.error(error));

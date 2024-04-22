@@ -13,7 +13,17 @@ inputs:
     description: 'labels to filter from'
     required: false
     default: []
-  
+  issue_number:
+    description: 'the issues number to update'
+    required: true
+  org_name:
+    description: 'github org to use'
+    required: true
+  repo_name:
+    description: 'github repo to use'
+    required: true
+
+
 
 # Define your outputs here.
 outputs:
