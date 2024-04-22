@@ -12,7 +12,7 @@ inputs:
   labels:
     description: 'labels to filter from'
     required: false
-    default: []
+    default: "[]"
   issue_number:
     description: 'the issues number to update'
     required: true
