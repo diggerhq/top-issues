@@ -18,7 +18,7 @@ interface IssueListOptions {
 async function main() {
     const owner:string = core.getInput("org_name")
     const repo:string = core.getInput("repo_name");
-    const issueNumberToUpdate:number = core.getInput("issue_number");
+    const issueNumberToUpdate:number = parseInt(core.getInput("issue_number"));
 
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
