@@ -25,7 +25,12 @@ async function main() {
     const ctx: Context = { octokit } as unknown as Context;
 
     // List all open issues.
-    const allIssues = await getAllOpenIssues(ctx, owner, repo);
+    let allIssues: Issue[];
+    try {
+        allIssues = await getAllOpenIssues(ctx, owner, repo);
+    } catch (err) {
+        throw err;
+    }
 
     // Filter to those that have at least 2 thumbs-up.
     let issues: Issue[] = allIssues.filter(issue => issue.reactions["+1"] >= 2);
@@ -43,12 +48,16 @@ async function main() {
     const rankingBodyString = renderRankingTemplate(templateParams);
 
     // Update the issue.
-    await octokit.rest.issues.update({
-        owner,
-        repo,
-        issue_number: issueNumberToUpdate,
-        body: rankingBodyString
-    });
+    try {
+        await octokit.rest.issues.update({
+            owner,
+            repo,
+            issue_number: issueNumberToUpdate,
+            body: rankingBodyString
+        })
+    } catch (err) {
+        throw err;
+    }
 }
 
 async function getAllOpenIssues(ctx: Context, owner: string, repo: string): Promise<Issue[]> {

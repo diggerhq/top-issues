@@ -45161,7 +45161,13 @@ async function main() {
     const issueNumberToUpdate = parseInt(core.getInput("issue_number"));
     const octokit = new octokit_1.Octokit({ auth: process.env.GITHUB_TOKEN });
     const ctx = { octokit };
-    const allIssues = await getAllOpenIssues(ctx, owner, repo);
+    let allIssues;
+    try {
+        allIssues = await getAllOpenIssues(ctx, owner, repo);
+    }
+    catch (err) {
+        throw err;
+    }
     let issues = allIssues.filter(issue => issue.reactions["+1"] >= 2);
     issues.sort((a, b) => b.reactions["+1"] - a.reactions["+1"]);
     const templateParams = {
@@ -45170,12 +45176,17 @@ async function main() {
         allIssues: issues,
     };
     const rankingBodyString = renderRankingTemplate(templateParams);
-    await octokit.rest.issues.update({
-        owner,
-        repo,
-        issue_number: issueNumberToUpdate,
-        body: rankingBodyString
-    });
+    try {
+        await octokit.rest.issues.update({
+            owner,
+            repo,
+            issue_number: issueNumberToUpdate,
+            body: rankingBodyString
+        });
+    }
+    catch (err) {
+        throw err;
+    }
 }
 async function getAllOpenIssues(ctx, owner, repo) {
     let issues = [];
