@@ -58,6 +58,8 @@ async function main() {
     } catch (err) {
         throw err;
     }
+
+    console.log(`Issue ${owner}/${repo}#${issueNumberToUpdate} updated successfully.`)
 }
 
 async function getAllOpenIssues(ctx: Context, owner: string, repo: string): Promise<Issue[]> {
