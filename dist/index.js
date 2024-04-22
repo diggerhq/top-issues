@@ -45166,6 +45166,7 @@ async function main() {
         allIssues = await getAllOpenIssues(ctx, owner, repo);
     }
     catch (err) {
+        console.log(`err while fetching issues ${err}`);
         throw err;
     }
     let issues = allIssues.filter(issue => issue.reactions["+1"] >= 2);
@@ -45185,6 +45186,7 @@ async function main() {
         });
     }
     catch (err) {
+        console.log(`err while updating issue ${err}`);
         throw err;
     }
     console.log(`Issue ${owner}/${repo}#${issueNumberToUpdate} updated successfully.`);

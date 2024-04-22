@@ -29,6 +29,7 @@ async function main() {
     try {
         allIssues = await getAllOpenIssues(ctx, owner, repo);
     } catch (err) {
+        console.log(`err while fetching issues ${err}`);
         throw err;
     }
 
@@ -56,6 +57,7 @@ async function main() {
             body: rankingBodyString
         })
     } catch (err) {
+        console.log(`err while updating issue ${err}`);
         throw err;
     }
 
