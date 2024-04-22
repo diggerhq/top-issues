@@ -1,6 +1,6 @@
 import { Octokit } from "octokit";
 import { Context } from "probot";
-const core = require('@actions/core');
+import * as core from '@actions/core';
 
 interface Issue {
     number: number;
